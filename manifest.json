@@ -1,0 +1,35 @@
+{
+    "manifest_version": 3,
+    "name": "MCP Web Bridge",
+    "version": "0.1.0",
+    "description": "Bring MCP-powered tools into ChatGPT web.",
+    "action": {
+        "default_title": "MCP Web Bridge"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://chat.openai.com/*",
+        "https://chatgpt.com/*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+    ],
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://chat.openai.com/*",
+                "https://chatgpt.com/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "icons": {}
+}

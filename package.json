@@ -1,0 +1,35 @@
+{
+  "name": "mcp-web-bridge",
+  "version": "0.1.0",
+  "description": "Chrome extension that brings MCP-powered tools into AI websites like ChatGPT",
+  "main": "scripts/mcp-localdev.js",
+  "scripts": {
+    "dev": "node scripts/mcp-localdev.js",
+    "dev:port": "PORT=8788 node scripts/mcp-localdev.js",
+    "build": "echo 'No build step needed for MV3 extension'",
+    "test": "echo 'No tests specified'",
+    "lint": "echo 'No linter configured'"
+  },
+  "keywords": [
+    "chrome-extension",
+    "mcp",
+    "model-context-protocol",
+    "chatgpt",
+    "ai-tools",
+    "websocket"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": ""
+}

@@ -1,0 +1,42 @@
+# MCP Web Bridge - Cursor Rules
+
+## Project Overview
+This is a Chrome MV3 extension that brings Model Context Protocol (MCP) tools into AI websites like ChatGPT. The extension provides a collapsible sidebar with server management, tool execution, and development features.
+
+## Architecture
+- **MV3 Extension**: Uses Manifest V3 with service worker and content scripts
+- **Shadow DOM**: All UI runs in isolated Shadow DOM to avoid CSS conflicts
+- **WebSocket MCP**: Connects to MCP servers via WebSocket for real-time tool execution
+- **Local Dev Server**: Includes a Node.js WebSocket server for development/testing
+
+## Key Files
+- `manifest.json`: Extension configuration and permissions
+- `background.js`: Service worker with MCP connection management
+- `content.js`: Content script with sidebar UI and tool execution
+- `scripts/mcp-localdev.js`: Local MCP WebSocket server for development
+
+## Development Guidelines
+1. **UI Styling**: Use ChatGPT-approximated colors and design patterns
+2. **MCP Protocol**: Follow JSON-RPC 2.0 spec for WebSocket communications
+3. **Error Handling**: Always include try-catch blocks and user feedback
+4. **Storage**: Use chrome.storage.sync for settings, chrome.storage.local for logs/status
+5. **Permissions**: Keep minimal - only storage and host permissions needed
+
+## Code Style
+- Use modern JavaScript (ES6+)
+- Include JSDoc type annotations for complex functions
+- Prefer async/await over Promises
+- Use descriptive variable names
+- Include console.debug statements for development
+
+## Testing
+- Test on both chatgpt.com and chat.openai.com
+- Verify MCP connections work with local dev server
+- Check that UI doesn't interfere with native ChatGPT controls
+- Ensure proper error handling and user feedback
+
+## Future Enhancements
+- Support for more MCP server types
+- Enhanced tool parameter validation
+- Better error reporting and debugging
+- Integration with more AI platforms

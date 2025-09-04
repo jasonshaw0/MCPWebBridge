@@ -1,42 +1,33 @@
-# MCP Web Bridge - Cursor Rules
+# RULES
 
-## Project Overview
-This is a Chrome MV3 extension that brings Model Context Protocol (MCP) tools into AI websites like ChatGPT. The extension provides a collapsible sidebar with server management, tool execution, and development features.
+Scope: Operating rules and guardrails for the project, copied verbatim where possible from the redesign plan. These govern architecture, permissions, DOM handling, and development practices.
+Last updated: 2025-09-03 (UTC)
 
-## Architecture
-- **MV3 Extension**: Uses Manifest V3 with service worker and content scripts
-- **Shadow DOM**: All UI runs in isolated Shadow DOM to avoid CSS conflicts
-- **WebSocket MCP**: Connects to MCP servers via WebSocket for real-time tool execution
-- **Local Dev Server**: Includes a Node.js WebSocket server for development/testing
+## System Rules & Project Guidelines
 
-## Key Files
-- `manifest.json`: Extension configuration and permissions
-- `background.js`: Service worker with MCP connection management
-- `content.js`: Content script with sidebar UI and tool execution
-- `scripts/mcp-localdev.js`: Local MCP WebSocket server for development
+- Decide Late for Unproven Choices: Defer irreversible decisions until we have more data. Use feature flags or toggles for experimental features and have a rollback plan. Start behind a flag or in dev mode until proven.
+- Lock Down Core Structure Early: The content/background split and message schema are fundamental – solidify these now (with TypeScript types or exhaustive documentation) so they don’t keep changing. Define Message types centrally and require justification and testing for any changes to this core.
+- Consistent Messaging Contract: All message types and data structures must be clearly documented and remain consistent. Avoid vague payloads. Each handler returns a well-structured success response or a detailed error. No silent failures – log and propagate errors for visibility.
+- Minimal & Explicit Permissions: Principle of least privilege. Only request needed permissions (storage and limited host permissions). Avoid any user data telemetry or external calls from the extension itself. All network calls are user-initiated and to MCP servers the user configures.
+- Robust DOM Handling:
+  - Use stable selectors whenever possible (prefer data-* attributes or roles over brittle classnames).
+  - Implement a MutationObserver to detect when critical DOM elements change and re-inject or reposition the UI accordingly. Handle window resize events to adjust positioning.
+  - Use safe fallback positions if dynamic anchoring fails so the MCP control remains visible.
+  - No interference with the page: Shadow DOM ensures styles don’t leak. Avoid injecting globals that conflict with the host page.
+- Cursor/AI Development Practices:
+  - Provide the latest context (this blueprint and updated design docs) to prevent reintroducing solved issues. Clearly state current state and next goal.
+  - Iterative development: implement and verify in small steps (storage, messaging, UI, integration).
+  - Ask for alternatives & justify for tricky decisions; weigh pros/cons.
+  - Verify environment assumptions; use empirical debugging with DevTools if behavior diverges from expectations.
+  - Keep tone focused and professional; prefer clear, directive prompts.
+- Prevent Regression of Known Issues: Document known problems and instruct not to repeat them. Enforce central message schema, stable positioning (avoid overlap with chat input), and design rules to prevent brittle behavior.
 
-## Development Guidelines
-1. **UI Styling**: Use ChatGPT-approximated colors and design patterns
-2. **MCP Protocol**: Follow JSON-RPC 2.0 spec for WebSocket communications
-3. **Error Handling**: Always include try-catch blocks and user feedback
-4. **Storage**: Use chrome.storage.sync for settings, chrome.storage.local for logs/status
-5. **Permissions**: Keep minimal - only storage and host permissions needed
+## Canonical terms (must be used consistently)
 
-## Code Style
-- Use modern JavaScript (ES6+)
-- Include JSDoc type annotations for complex functions
-- Prefer async/await over Promises
-- Use descriptive variable names
-- Include console.debug statements for development
-
-## Testing
-- Test on both chatgpt.com and chat.openai.com
-- Verify MCP connections work with local dev server
-- Check that UI doesn't interfere with native ChatGPT controls
-- Ensure proper error handling and user feedback
-
-## Future Enhancements
-- Support for more MCP server types
-- Enhanced tool parameter validation
-- Better error reporting and debugging
-- Integration with more AI platforms
+- Content Script = UI only
+- Background = logic only
+- Shadow DOM
+- typed message schema
+- storage: sync vs local
+- MutationObserver with fallback
+- minimal permissions

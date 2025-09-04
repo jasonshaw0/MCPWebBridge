@@ -1,5 +1,7 @@
 # PROMPTS
 
+Usage: copy into Cursor when needed; not enforced as rules.
+
 Scope: Reusable prompts for development handoff and daily operation, extracted from the redesign plan. No new guidance added.
 Last updated: 2025-09-03 (UTC)
 
@@ -42,6 +44,7 @@ Immediate Next Steps: Set up project structure; implement background (storage, m
 ## Daily operator prompt (concise)
 
 You are working on MCP Web Bridge (MV3). Follow canonical terms and rules strictly:
+
 - Content Script = UI only; Background = logic only; Shadow DOM; typed message schema; storage: sync vs local; MutationObserver with fallback; minimal permissions.
 - Implement or refactor one cohesive unit at a time (e.g., storage module, message router, tools UI).
 - Ensure messages use explicit kinds; responses carry ok and data|error.

@@ -42,5 +42,3 @@ Screenshot reference: see the figure described in the source plan at `docs/Redes
 - Setup: [SETUP.md](./SETUP.md)
 - Prompts: [PROMPTS.md](./PROMPTS.md)
 - Tasks: [TASKS.md](./TASKS.md)
-
-

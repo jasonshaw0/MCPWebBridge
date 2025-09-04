@@ -39,20 +39,7 @@ Last updated: 2025-09-03 (UTC)
 
 ### Sequence (simplified)
 
-```mermaid
-sequenceDiagram
-    actor U as User
-    participant CS as Content Script (UI)
-    participant BG as Background (logic)
-    participant CM as MCP Connection Manager
-
-    U->>CS: Click "Connect" or "Run Tool"
-    CS->>BG: sendMessage({ kind, requestId, payload })
-    BG->>CM: connect / callTool
-    CM-->>BG: tools / result / error
-    BG-->>CS: { requestId, ok, data | error }
-    CS-->>U: Update UI (status, tools, results)
-```
+**Memory (Knowledge Graph Memory):**_Use case:_ Persistent memory across sessions[\[80\]](https://github.com/modelcontextprotocol/servers#:~:text=%2A%20Filesystem%20%20,solving%20through%20thought%20sequences)[\[38\]](https://github.com/modelcontextprotocol/servers#:~:text=%2A%20Memory%20,Time%20and%20timezone%20conversion%20capabilities). License MIT.**Integration:** If the user runs npx @modelcontextprotocol/server-memory (as indicated in the repository[\[81\]](https://github.com/modelcontextprotocol/servers#:~:text=For%20example%2C%20this%20will%20start,the%20Memory%20server)), they get a local memory server. We can support connecting to it. Tools might include memory/save and memory/query.**UI:** We integrate this by adding UI controls to save highlighted text to memory (maybe a button in the extension UI “Save last answer to Memory”) and a small search bar in the Tools tab for querying memory. Implementing this fully might be phase 2, but we design the system such that adding it is straightforward. We will ensure the extension can handle multiline inputs/outputs for such use.**Security:** The memory server is local and stores data on the user’s machine (or cloud if they set one up), so privacy is in user’s control. No licensing issues for usage. We just need to ensure the user understands that saving data via the extension means it’s stored in the memory server (which might be plain files or a database).
 
 ## Storage model
 

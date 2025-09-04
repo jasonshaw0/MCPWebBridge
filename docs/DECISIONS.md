@@ -4,6 +4,7 @@ Scope: ADR-style entries capturing explicit decisions from the redesign plan. Ea
 Last updated: 2025-09-03 (UTC)
 
 ## ADR-001: Enforce Content Script = UI only, Background = logic only
+
 Date: 2025-09-03
 
 - Context: The initial implementation mixed concerns; the redesign mandates a strict separation.
@@ -11,6 +12,7 @@ Date: 2025-09-03
 - Consequences: Improves maintainability and testability; UI can change without affecting core logic; all network/tool calls centralized.
 
 ## ADR-002: Typed message schema and stable message kinds
+
 Date: 2025-09-03
 
 - Context: Previous ad-hoc message patterns led to confusion.
@@ -18,6 +20,7 @@ Date: 2025-09-03
 - Consequences: Clear contracts, easier debugging, enables future TypeScript types and validation.
 
 ## ADR-003: storage: sync vs local separation
+
 Date: 2025-09-03
 
 - Context: Need to distinguish persistent configuration from volatile runtime state.
@@ -25,6 +28,7 @@ Date: 2025-09-03
 - Consequences: Predictable state management; supports MV3 service worker lifecycle.
 
 ## ADR-004: Shadow DOM UI and robust DOM handling
+
 Date: 2025-09-03
 
 - Context: Host page is dynamic; CSS conflicts must be avoided.
@@ -32,6 +36,7 @@ Date: 2025-09-03
 - Consequences: Resilient UI on SPA changes; minimized risk of style/script collisions.
 
 ## ADR-005: Minimal permissions and no telemetry
+
 Date: 2025-09-03
 
 - Context: Principle of least privilege and user trust.
@@ -39,6 +44,7 @@ Date: 2025-09-03
 - Consequences: Easier distribution/approval; better user trust posture.
 
 ## ADR-006: Modular code layout and future MCP adapters
+
 Date: 2025-09-03
 
 - Context: Monolithic files hinder extensibility.

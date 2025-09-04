@@ -24,5 +24,3 @@ Last updated: 2025-09-03 (UTC)
 6) [SETUP.md](./SETUP.md)
 7) [TASKS.md](./TASKS.md)
 8) [PROMPTS.md](./PROMPTS.md)
-
-

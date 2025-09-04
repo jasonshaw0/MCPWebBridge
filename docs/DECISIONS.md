@@ -1,7 +1,7 @@
 # DECISIONS
 
 Scope: ADR-style entries capturing explicit decisions from the redesign plan. Each entry includes Context, Decision, and Consequences, plus date. No speculative additions.
-Last updated: 2025-09-03 (UTC)
+Last updated: 2025-09-04 (UTC)
 
 ## ADR-001: Enforce Content Script = UI only, Background = logic only
 
@@ -34,6 +34,12 @@ Date: 2025-09-03
 - Context: Host page is dynamic; CSS conflicts must be avoided.
 - Decision: Inject UI under a Shadow DOM; use stable selectors; use a MutationObserver with fallback positioning if anchoring fails.
 - Consequences: Resilient UI on SPA changes; minimized risk of style/script collisions.
+
+### Note on composer selector (ChatGPT.com)
+
+- Context: The ChatGPT composer can change; current best selector is `form[data-type="unified-composer"]`.
+- Decision: Attempt to anchor a small MCP chip near the composer using this selector; if not present, fall back to a fixed bottom-right chip so the UI remains discoverable.
+- Consequences: Prevents UI disappearance when SPA rerenders or selector breaks; visible fallback ensures access without overlapping core controls.
 
 ## ADR-005: Minimal permissions and no telemetry
 

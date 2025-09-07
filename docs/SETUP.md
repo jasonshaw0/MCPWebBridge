@@ -1,7 +1,7 @@
 # SETUP
 
 Scope: Local development setup for the MCP Web Bridge extension, including load-unpacked instructions, running local MCP servers, and troubleshooting. Based on the redesign plan’s workflow guidance.
-Last updated: 2025-09-03 (UTC)
+Last updated: 2025-09-07 (UTC)
 
 ## Prerequisites
 
@@ -20,17 +20,23 @@ Last updated: 2025-09-03 (UTC)
 - Open DevTools on ChatGPT and look for the Shadow DOM host elements.
 - Reload extension after changes (or adopt a bundler with HMR later).
 
-## Run the local echo MCP server
+## Run the Local Echo MCP server
 
 - Script: `scripts/mcp-localdev.js`
+- Install deps (first time): `npm i ws`
 - Start: `node scripts/mcp-localdev.js`
-- In the extension UI, connect to the Local Dev server and test tools (echo/time/sum).
+- In the extension UI, enable "Local Echo" then click Connect, open Tools tab and run tools (echo/time/sum).
 
-## Configure Firecrawl MCP (optional)
+## Run the Memory MCP server (optional, local)
 
-- Run a local Firecrawl MCP server or use a cloud endpoint per their docs.
-- Add a server entry with the Firecrawl WebSocket URL.
-- Connect via the Servers tab; tools should list in the Tools tab.
+- Command: `npx -y @modelcontextprotocol/server-memory`
+- Default listens on localhost; add it in the extension settings later (future milestone) or adjust the seeded URL.
+- Then Connect and use `memory/*` tools from the Tools tab.
+
+## Firecrawl MCP (docs-only, optional)
+
+- If desired for dev-only experiments, consult Firecrawl MCP docs to run locally with your own API key.
+- Do not seed third-party servers in settings; only user-initiated connections.
 
 ## Troubleshooting
 

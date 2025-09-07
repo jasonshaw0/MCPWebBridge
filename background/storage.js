@@ -89,6 +89,7 @@ function createSeedServers() {
       name: "Local Echo",
       description: "Dev placeholder for sanity checks",
       enabled: false,
+      url: "ws://127.0.0.1:8788",
     },
   ];
   return servers;
@@ -113,5 +114,19 @@ export async function ensureSettings() {
   }
   return current;
 }
+
+/**
+ * Merge a partial status object for a server into chrome.storage.local statuses
+ * @param {string} serverId
+ * @param {Record<string, any>} partial
+ */
+export async function mergeStatus(serverId, partial) {
+  const statuses = await readStatuses();
+  const prev = statuses[serverId] || {};
+  statuses[serverId] = { ...prev, ...partial };
+  await writeStatuses(statuses);
+  return statuses[serverId];
+}
+
 
 

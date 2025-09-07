@@ -13,9 +13,9 @@ See the full doc set via [INDEX.md](./INDEX.md).
 
 1) Load the extension:
    - Load-unpacked from this repo (see [SETUP.md](./SETUP.md)).
-2) Open ChatGPT (supported domains per manifest) and verify the floating MCP toggle appears.
-3) Use the Dev/Servers tabs to connect to a local MCP server (e.g., the Local Dev echo server in `scripts/mcp-localdev.js`).
-4) Run a tool and view results in the panel.
+2) Open ChatGPT (supported domains per manifest) and verify the MCP tab on the right.
+3) Stage 2: start the Local Echo server: `node scripts/mcp-localdev.js` (requires `npm i ws`).
+4) In Servers tab, click "Connect" on Local Echo. Switch to Tools tab to see `echo`, `time`, `sum`. Run with JSON args (e.g., `{ "text": "hi" }`).
 
 Screenshot reference: see the figure described in the source plan at `docs/Redesign & Bootstrap Plan for MCP Web Bridge Extension.md`.
 

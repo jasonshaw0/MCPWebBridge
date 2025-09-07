@@ -10,6 +10,8 @@
     --gpt-text-primary: #ececf1;
     --gpt-text-secondary: #aab2c0;
     --gpt-radius: 6px;
+    --mcp-ok: #10b981;
+    --mcp-bad: #ef4444;
   }
   .mcp-root { position: fixed; top: 0; right: 0; height: 100%; z-index: var(--mcp-z); font-family: var(--gpt-font-family); color: var(--gpt-text-primary); }
   .mcp-sidebar { width: 340px; height: 100%; background: var(--gpt-bg-primary); border-left: 1px solid var(--gpt-border-color); transform: translateX(100%); transition: transform 0.25s ease-in-out; display: flex; flex-direction: column; }
@@ -25,6 +27,9 @@
   .mcp-item { border: 1px solid var(--gpt-border-color); background: var(--gpt-bg-secondary); border-radius: var(--gpt-radius); padding: 12px; }
   .mcp-item-header { display: flex; align-items: center; gap: 8px; }
   .mcp-item-name { font-weight: 600; font-size: 15px; }
+  .mcp-item-dot { width: 8px; height: 8px; border-radius: 999px; background: #64748b; }
+  .mcp-item-dot.ok { background: var(--mcp-ok); }
+  .mcp-item-dot.bad { background: var(--mcp-bad); }
   .mcp-item-desc { font-size: 13px; color: var(--gpt-text-secondary); margin-top: 4px; margin-bottom: 12px; }
   .mcp-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .mcp-actions button { background: transparent; color: var(--gpt-text-secondary); border: 1px solid var(--gpt-border-color); border-radius: var(--gpt-radius); padding: 6px 10px; cursor: pointer; font-size: 13px; }
@@ -32,6 +37,10 @@
   .mcp-toggle { display: inline-flex; align-items: center; gap: 6px; }
   .mcp-toggle input { width: 36px; height: 18px; cursor: pointer; }
   .mcp-chip { position: fixed; z-index: var(--mcp-z); background: var(--gpt-bg-primary); color: var(--gpt-text-primary); border: 1px solid var(--gpt-border-color); border-radius: 999px; padding: 6px 10px; font-weight: 600; cursor: pointer; }
+  .mcp-result-panel { margin-top: 8px; border: 1px solid var(--gpt-border-color); border-radius: var(--gpt-radius); background: #000; }
+  .mcp-result-header { padding: 4px 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--gpt-text-secondary); border-bottom: 1px solid var(--gpt-border-color); }
+  .mcp-result-header button { padding: 2px 6px; font-size: 11px; }
+  .mcp-result-body { padding: 8px; max-height: 200px; overflow: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
   `;
 
   function createShadowHost() {
@@ -68,7 +77,10 @@
     const btnServers = document.createElement('button');
     btnServers.className = 'active';
     btnServers.textContent = 'Servers';
+    const btnTools = document.createElement('button');
+    btnTools.textContent = 'Tools';
     nav.appendChild(btnServers);
+    nav.appendChild(btnTools);
     sidebar.appendChild(nav);
 
     const content = document.createElement('div');
@@ -78,27 +90,64 @@
     const serverList = document.createElement('ul');
     serverList.className = 'mcp-list';
     panelServers.appendChild(serverList);
+    const panelTools = document.createElement('div');
+    panelTools.className = 'mcp-tab-panel';
+    const toolsHeader = document.createElement('div');
+    toolsHeader.className = 'mcp-item-desc';
+    toolsHeader.style.padding = '8px';
+    toolsHeader.textContent = 'No server connected';
+    const toolsContainer = document.createElement('div');
+    toolsContainer.style.padding = '8px';
+    panelTools.appendChild(toolsHeader);
+    panelTools.appendChild(toolsContainer);
     content.appendChild(panelServers);
+    content.appendChild(panelTools);
     sidebar.appendChild(content);
 
     root.appendChild(sidebar);
 
     tab.addEventListener('click', () => sidebar.classList.toggle('open'));
 
+    function switchTab(btn) {
+      [btnServers, btnTools].forEach(b => b.classList.remove('active'));
+      [panelServers, panelTools].forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      if (btn === btnServers) panelServers.classList.add('active'); else panelTools.classList.add('active');
+    }
+    btnServers.addEventListener('click', () => switchTab(btnServers));
+    btnTools.addEventListener('click', () => switchTab(btnTools));
+
     async function refresh() {
       try {
-        const res = await window.MCPBus.sendMessage('LIST_SERVERS');
+        const [serverRes, statusRes] = await Promise.all([
+          window.MCPBus.sendMessage('LIST_SERVERS'),
+          window.MCPBus.sendMessage('LIST_STATUS'),
+        ]);
+        const statuses = (statusRes && statusRes.ok && statusRes.statuses) || {};
+
         serverList.textContent = '';
-        if (res && res.ok) {
-          (res.servers || []).forEach((srv) => {
+        if (serverRes && serverRes.ok) {
+          (serverRes.servers || []).forEach((srv) => {
             const li = document.createElement('li');
             li.className = 'mcp-item';
+
             const header = document.createElement('div');
             header.className = 'mcp-item-header';
+
+            const dot = document.createElement('span');
+            dot.className = 'mcp-item-dot';
+            const status = statuses[srv.id];
+            if (status) {
+              if (status.ok) dot.classList.add('ok');
+              else dot.classList.add('bad');
+            }
+            header.appendChild(dot);
+
             const name = document.createElement('div');
             name.className = 'mcp-item-name';
             name.textContent = srv.name;
             header.appendChild(name);
+
             const desc = document.createElement('div');
             desc.className = 'mcp-item-desc';
             desc.textContent = srv.description || '';
@@ -115,6 +164,17 @@
             });
             toggle.appendChild(input);
             toggle.appendChild(document.createTextNode('Enabled'));
+            const btnConnect = document.createElement('button');
+            btnConnect.textContent = 'Connect';
+            btnConnect.disabled = !(srv.url && srv.url.startsWith('ws'));
+            btnConnect.addEventListener('click', async () => {
+              const r = await window.MCPBus.sendMessage('CONNECT_MCP', { id: srv.id, url: srv.url });
+              if (r && r.ok) {
+                await renderTools(srv, r.tools || []);
+                switchTab(btnTools);
+              }
+              await refresh();
+            });
             const btnDefault = document.createElement('button');
             btnDefault.textContent = 'Set default';
             btnDefault.addEventListener('click', async () => {
@@ -122,6 +182,7 @@
               await refresh();
             });
             actions.appendChild(toggle);
+            actions.appendChild(btnConnect);
             actions.appendChild(btnDefault);
             li.appendChild(header);
             li.appendChild(desc);
@@ -131,6 +192,82 @@
         }
       } catch (e) {
         // silent for M1
+      }
+    }
+
+    async function renderTools(server, tools) {
+      toolsHeader.textContent = `Tools for "${server.name}"`;
+      toolsContainer.textContent = '';
+      const list = document.createElement('div');
+      list.style.display = 'flex';
+      list.style.flexDirection = 'column';
+      list.style.gap = '8px';
+      (tools || []).forEach((tool) => {
+        const card = document.createElement('div');
+        card.className = 'mcp-item';
+        const title = document.createElement('div');
+        title.className = 'mcp-item-name';
+        title.textContent = tool.name;
+        const desc = document.createElement('div');
+        desc.className = 'mcp-item-desc';
+        desc.textContent = tool.description || '';
+        const row = document.createElement('div');
+        row.className = 'mcp-actions';
+        const input = document.createElement('textarea');
+        input.placeholder = '{ }';
+        input.style.width = '100%';
+        input.style.height = '64px';
+        input.style.background = 'transparent';
+        input.style.color = 'inherit';
+        input.style.border = '1px solid var(--gpt-border-color)';
+        input.style.borderRadius = '6px';
+        const run = document.createElement('button');
+        run.textContent = 'Run';
+        run.addEventListener('click', async () => {
+          let args = {};
+          try { args = input.value ? JSON.parse(input.value) : {}; } catch (e) { 
+            renderResultPanel({ error: 'Invalid JSON arguments' });
+            return;
+          }
+          const r = await window.MCPBus.sendMessage('CALL_MCP_TOOL', { id: server.id, name: tool.name, args });
+          renderResultPanel(r);
+          await refresh();
+        });
+        row.appendChild(run);
+        card.appendChild(title);
+        card.appendChild(desc);
+        card.appendChild(input);
+        card.appendChild(row);
+        list.appendChild(card);
+      });
+      toolsContainer.appendChild(list);
+
+      const resultPanel = document.createElement('div');
+      resultPanel.className = 'mcp-result-panel';
+      resultPanel.style.display = 'none';
+      const resultHeader = document.createElement('div');
+      resultHeader.className = 'mcp-result-header';
+      const resultTitle = document.createElement('span');
+      resultTitle.textContent = 'Result';
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = 'Copy';
+      const resultBody = document.createElement('pre');
+      resultBody.className = 'mcp-result-body';
+      copyBtn.addEventListener('click', () => navigator.clipboard.writeText(resultBody.textContent));
+
+      resultHeader.appendChild(resultTitle);
+      resultHeader.appendChild(copyBtn);
+      resultPanel.appendChild(resultHeader);
+      resultPanel.appendChild(resultBody);
+      toolsContainer.appendChild(resultPanel);
+
+      function renderResultPanel(r) {
+        resultPanel.style.display = 'block';
+        if (r && r.ok) {
+          resultBody.textContent = JSON.stringify(r.result, null, 2);
+        } else {
+          resultBody.textContent = r && r.error ? r.error : 'Unknown Error';
+        }
       }
     }
 

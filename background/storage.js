@@ -88,7 +88,8 @@ function createSeedServers() {
       id: "local-echo",
       name: "Local Echo",
       description: "Dev placeholder for sanity checks",
-      enabled: false,
+      enabled: true,
+      url: "ws://127.0.0.1:8788",
     },
   ];
   return servers;

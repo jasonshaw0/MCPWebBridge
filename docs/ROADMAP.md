@@ -16,7 +16,9 @@ Last updated: 2025-09-03 (UTC)
 
 - Acceptance checks:
   - WebSocket JSON-RPC connections managed per serverId.
-  - Tools listed via connection after CONNECT_MCP.
+  - CONNECT_MCP performs initialize → tools/list and returns tools.
+  - LIST_MCP_TOOLS and CALL_MCP_TOOL work end-to-end with `{ ok, data|error }`.
+  - Status updated in chrome.storage.local; logs capped (~500 entries).
   - Errors surfaced via structured error field and log entries.
 - Risks: Reconnect semantics in MV3; error propagation.
 
